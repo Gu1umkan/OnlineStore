@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -7,14 +8,15 @@ public class User {
     private String gender;
     private String email;
     private String password;
-    private Product[][] products = new Product[2][100];
+    private Product[] products = new Product[0];
+    // private int productId = 0;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String gender, String email, String password, Product[][] products) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String firstName, String lastName, String gender, String email, String password, Product[] products) {
+        chekFirstName(firstName);
+        chekLastName(lastName);
         chekGender(gender);
         chekEmail(email);
         chekPassword(password);
@@ -26,7 +28,7 @@ public class User {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        chekFirstName(firstName);
     }
 
     public String getLastName() {
@@ -34,7 +36,7 @@ public class User {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        chekLastName(lastName);
     }
 
     public String getGender() {
@@ -61,22 +63,102 @@ public class User {
         chekPassword(password);
     }
 
-    public Product[][] getProducts() {
+    public Product[] getProducts() {
         return products;
     }
 
-    public void setProducts(Product[][] products) {
+    public void setProducts(Product[] products) {
         this.products = products;
+    }
+
+    // public int getProductId() {
+//        return productId;
+//    }
+
+    // public int setProductId() {
+//        return this.productId = ++productId;
+//    }
+
+    public static User[] registr(User[] users) {
+        User user = new User();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your first name: ");
+        user.setFirstName(scanner.nextLine());
+        System.out.print("Enter your last name: ");
+        user.setLastName(scanner.nextLine());
+        System.out.print("Enter your gender: ");
+        user.setGender(scanner.nextLine());
+        boolean isTrue = true;
+        int count = 0;
+        while (isTrue) {
+            System.out.print("Enter your email: ");
+            String email = scanner.nextLine();
+            for (int i = 0; i < users.length; i++) {
+                if (!Objects.equals(users[i].getEmail(), email)) {
+                    count++;
+                }
+            }
+            if (count == users.length) {
+                user.setEmail(email);
+                isTrue = false;
+            }
+        }
+        System.out.print("Enter your password: ");
+        user.setPassword(scanner.nextLine());
+        System.out.print("           ✅ Soccessfully registered\n");
+        users = Arrays.copyOf(users, users.length + 1);
+        users[users.length - 1] = user;
+        return users;
+    }
+
+    public static int login(User[] users) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter your password: ");
+        String password = scanner.nextLine();
+        for (int i = 0; i < users.length; i++) {
+            if (email.equals(users[i].getEmail()) && password.equals(users[i].getPassword())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void chekFirstName(String name) {
+        boolean isTrue = true;
+        while (isTrue) {
+            if (!name.isBlank()) {
+                this.firstName = name;
+                isTrue = false;
+            } else {
+                System.out.println("write first name: ");
+                name = new Scanner(System.in).nextLine();
+            }
+        }
+    }
+
+    private void chekLastName(String lastName) {
+        boolean isTrue = true;
+        while (isTrue) {
+            if (!lastName.isBlank()) {
+                this.lastName = lastName;
+                isTrue = false;
+            } else {
+                System.out.println("write last name: ");
+                lastName = new Scanner(System.in).nextLine();
+            }
+        }
     }
 
     private void chekEmail(String email) {
         boolean isTrue = true;
         while (isTrue) {
-            if (!email.isBlank() && email.contains("@gmail.com")) {
+            if (email.endsWith("@gmail.com") && email.length() > "@gmail.com".length()) {
                 this.email = email;
                 isTrue = false;
             } else {
-                System.err.println("Invalid email!('@gmail.com' should be written)\n try again:");
+                System.out.println("❗️Invalid email!('@gmail.com' should be written)\nTry again: ");
                 email = new Scanner(System.in).nextLine();
             }
         }
@@ -89,7 +171,7 @@ public class User {
                 this.password = password;
                 isTrue = false;
             } else {
-                System.err.println("Password length should be between 4-12 characters.\ntry again:");
+                System.out.println("📌Password length should be between 4-12 characters.\nTry again");
                 password = new Scanner(System.in).nextLine();
             }
         }
@@ -102,179 +184,25 @@ public class User {
                 this.gender = gender;
                 isTrue = false;
             } else {
-                System.err.println("Invalid gender (sould be 'male' or 'female')\n try again:");
+                System.out.println("❗️Invalid gender (sould be 'male' or 'female')");
+                System.out.println("\n Try again:  ");
                 gender = new Scanner(System.in).nextLine();
             }
         }
     }
 
-
     @Override
     public String toString() {
         return
-                "firstName: " + firstName +
+                "----------------------------------------------" +
+                        "firstName: " + firstName +
                         "\nlastName: " + lastName +
                         "\ngender: " + gender +
                         "\nemail: " + email +
                         "\npassword: " + password +
-                        "\nproducts: " + products
+                        "\n product: " + Arrays.toString(products)
                 ;
     }
 
-
-    public void registr(User[] users, int counter) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter your first name: ");
-        setFirstName(scanner.nextLine());
-        System.out.print("Enter your last name: ");
-        setLastName(scanner.nextLine());
-        System.out.print("Enter your gender: ");
-        boolean isTrue = true;
-        setGender(scanner.nextLine());
-        while (isTrue) {
-            System.out.print("Enter your email: ");
-            String email = scanner.nextLine();
-            int count = 0;
-            for (int i = 0; i < counter; i++) {
-                if (!Objects.equals(users[i].getEmail(), email)) {
-                    count++;
-                }
-            }
-            if (count == counter) {
-                setEmail(email);
-                isTrue = false;
-            } else break;
-
-
-        }
-        System.out.print("Enter your password: ");
-        setPassword(scanner.nextLine());
-
-        System.out.print("Soccessfully registered\n");
-
-
-    }
-
-
-    public static void login(User[] users, int counter) {
-        Scanner scanner = new Scanner(System.in);
-        boolean bool = true;
-        int books = 0;
-        int electronics = 0;
-        Product[][] products1 = new Product[2][100];
-        while (bool) {
-            System.out.println("Enter your email: ");
-            String email = scanner.nextLine();
-            System.out.println("Enter your password: ");
-            String password = scanner.nextLine().toLowerCase();
-            boolean istrue = true;
-            while (istrue) {
-                for (int i = 0; i < counter; i++) {
-                    if (email.equals(users[i].getEmail()) && password.equals(users[i].getPassword())) {
-                        System.out.println(STR. """
-                        Login succesfull.Welcome!
-                        Profile:  \{ users[i].getFirstName() }  \{ users[i].getLastName() }
-                        email: \{ users[i].getEmail() }
-                 0.Logout
-                 1.Add new Product
-                 2.Get all Products
-                 3.Get all Books
-                 4.Get all Electronics
-                 Enter your choice:
-
-                        """ );
-                        switch (scanner.nextLine().toLowerCase()) {
-                            case "0", "logout":
-                                bool = false;
-                                istrue = false;
-
-                                break;
-                            case "1", "add": {
-                                System.out.println("Choise category:Electronic or book");
-                                String category = scanner.nextLine();
-
-                                if ("electronic".equalsIgnoreCase(category)) {
-                                    Electronics electronic = new Electronics();
-                                    electronic.addElectronic();
-                                    products1[1][electronics++] = electronic;
-                                    users[i].setProducts(products1);
-                                } else if ("book".equalsIgnoreCase(category)) {
-                                    Book book = new Book();
-                                    book.addBook();
-                                    products1[0][books++] = book;
-                                    users[i].setProducts(products1);
-                                    System.out.println("Succesfully added product \n");
-                                   // break;
-                                } else {
-                                    System.err.println("Invalid category!");
-                                }
-                                break;
-                            }
-
-                            case "2", "get all product":
-                                boolean allNull = true;
-                                for (int j = 0; j < 2; j++) {
-                                    for (int k = 0; k < books+electronics; k++) {
-                                        if (users[i].getProducts()[j][k] != null) {
-                                            allNull = false;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (allNull) {
-                                    System.out.println("Product jok");
-                                } else {
-                                    for (int j = 0; j < 2; j++) {
-                                        for (int k = 0; k < books+electronics; k++) {
-                                            System.out.println(users[i].getProducts()[j][k]);
-                                        }
-                                    }
-                                }
-                                break;
-                            case "3", "books":
-                                boolean alNull = true;
-                                 for (int k = 0; k < books+electronics; k++) {
-                                        if (users[i].getProducts()[0][k] != null) {
-                                            alNull = false;
-                                            break;
-                                        }
-                                    }
-
-                                if (alNull) {
-                                    System.out.println("Product book jok");}
-                                else {
-                                for (int j = 0; j < books; j++) {
-                                    System.out.println(users[i].getProducts()[0][j]);
-                                }}
-                                break;
-
-                            case "4", "electronics":
-                                boolean isNull = true;
-                                for (int k = 0; k < electronics; k++) {
-                                    if (users[i].getProducts()[1][k] != null) {
-                                        isNull = false;
-                                        break;
-                                    }
-                                }
-
-                                if (isNull) {
-                                    System.out.println("Product electronic jok");}
-                                else {
-                                for (int j = 0; j < electronics; j++) {
-                                    System.out.println(users[i].getProducts()[1][j]);
-                                }}
-                                break;
-                            default:
-                                System.err.println("Invalid choice");
-                        }
-                    }
-                }
-                if (!istrue) {
-                    System.out.println("Not found ");
-                }
-            }
-
-        }
-    }
-
 }
+
